@@ -21,8 +21,6 @@ namespace Parser
         {
             if(e.KeyChar == '0')
             {
-                
-
                 Parser.Correct.AddDigit('0');
                 LabelExpression.Text = Parser.Correct.Expression;
 

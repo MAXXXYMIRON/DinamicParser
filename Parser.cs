@@ -22,7 +22,7 @@ namespace Parser
             Correct = new CorectorExpression();
         }
 
-
+        //Парсинг с простой проверкой выражения
         public static string ParsingExpression(string Expression)
         {
             if (Correct.RightExpression())
@@ -30,9 +30,12 @@ namespace Parser
             return Minimazer.Result;
         }
 
-        public static string ParsingExpression(string Expression, )
+        //Парсинг со сложной проверкой выражения
+        public static string ParsingExpression(string Expression, char D)
         {
-            if (Correct.RightExpression())
+            if (D != Correct.Deep) return Minimazer.Result;
+
+            if (Correct.RightExpressionDeep())
                 Minimazer.Result = Parsing(Minimazer.Minimize(Expression));
             return Minimazer.Result;
         }
@@ -52,6 +55,8 @@ namespace Parser
 
             return RunOperation(operation, Convert.ToSingle(exp1), Convert.ToSingle(exp2));
         }
+
+
 
         //Проверить если в выражении лишь одно число
         static bool Digit(ref string Expression)

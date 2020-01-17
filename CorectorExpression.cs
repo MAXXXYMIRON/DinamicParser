@@ -17,6 +17,7 @@ namespace Parser
         const string Separators = "().";
 
         public string Expression { get; private set; }
+        public char Deep { get; private set;   } = 'D';
 
         public CorectorExpression()
         {
