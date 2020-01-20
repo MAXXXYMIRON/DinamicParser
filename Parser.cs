@@ -13,12 +13,14 @@ namespace Parser
         static string[] Operations = new string[12] 
         {"+", "-", "*", "/", "^", "√", "Sin", "Cos", "Tan", "Ln", "Exp", "—"};
 
+        static string EarlyResult;
+        static Minimize Min;
         public static CorectorExpression Correct { get; set; }
-        static ExpressionMinimazer Minimazer;
 
         static Parser()
         {
-            Minimazer = new ExpressionMinimazer();
+            EarlyResult = "0";
+            Min = new Minimize();
             Correct = new CorectorExpression();
         }
 
@@ -26,22 +28,24 @@ namespace Parser
         public static string ParsingExpression(string Expression)
         {
             if (Correct.RightExpression())
-                Minimazer.Result = Parsing(Minimazer.Minimize(Expression));
-            return Minimazer.Result;
+                EarlyResult = Parsing(Min.Minimized(Expression));
+
+            return EarlyResult;
         }
 
         //Парсинг со сложной проверкой выражения
         public static string ParsingExpression(string Expression, char D)
         {
-            if (D != Correct.Deep) return Minimazer.Result;
+            if (D != Correct.Deep) return EarlyResult;
 
             if (Correct.RightExpressionDeep())
-                Minimazer.Result = Parsing(Minimazer.Minimize(Expression));
-            return Minimazer.Result;
+                EarlyResult = Parsing(Expression);
+
+            return EarlyResult;
         }
 
         //Парсинг выражения(вернет результат)
-        static string Parsing(string Expression)
+        internal static string Parsing(string Expression)
         {
             DelBorder(ref Expression);
 
