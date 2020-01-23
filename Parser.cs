@@ -65,7 +65,7 @@ namespace Parser
         //Проверить если в выражении лишь одно число
         static bool Digit(ref string Expression)
         {
-            string digit = "0123456789.";
+            string digit = "0123456789.,";
             for (ushort i = 0; i < Expression.Length; i++)
                 if (!digit.Contains(Expression[i])) return false;
 

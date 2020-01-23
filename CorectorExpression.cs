@@ -74,7 +74,7 @@ namespace Parser
 
             if (Operations.Contains(Expression[Expression.Length - 1]))
             {
-                Expression = Expression.Remove(Expression[Expression.Length - 1]);
+                Expression = Expression.Remove(Expression.Length - 1);
                 Expression += operation;
                 return;
             }

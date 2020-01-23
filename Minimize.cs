@@ -9,6 +9,8 @@ namespace Parser
     class Minimize
     {
         List<(string Exp, string Res)> Pieces;
+        const string Func = "SCTLE√";
+        const string Oper = "+-*/^";
 
         public Minimize() { Pieces = new List<(string Exp, string Res)>(); }
 
@@ -17,7 +19,7 @@ namespace Parser
             ChangeExpression(ref Expression);
 
             while (SearchPiecesInBoreder(ref Expression)) { }
-            while (SearchPiecesInUnaryFunction(ref Expression)) { }
+            SearchPiecesInUnaryFunction(ref Expression);
 
             return Expression;
         }
@@ -27,13 +29,12 @@ namespace Parser
             string Piece = "";
             for (ushort i = 0; i < Expression.Length; i++)
             {
-                if (Piece != "") Piece += Expression[i];
-
+                Piece += Expression[i];
                 if (Expression[i] == '(') Piece = Expression[i].ToString();
 
                 if (Expression[i] == ')')
                 {
-                    Pieces.Add((Piece, Parser.Parsing(Piece)));
+                    Pieces.Add((Piece, Parser.Parsing(Piece).Replace('-', '—')));
                     Expression = Expression.Replace(Piece, Pieces[Pieces.Count - 1].Res);
                     return true;
                 }
@@ -41,20 +42,29 @@ namespace Parser
             return false;
         }
 
-        private bool SearchPiecesInUnaryFunction(ref string Expression)
+        private void SearchPiecesInUnaryFunction(ref string Expression)
         {
+            string Piece = "";
             for (ushort i = 0; i < Expression.Length; i++)
-            {
+                if (Func.Contains(Expression[i]))
+                {
+                    Piece = Expression.Substring(i);
+                    for (int j = 0; j < Oper.Length; j++)
+                        Piece = (Piece.IndexOf(Oper[j]) < 0) ? Piece : Piece.Remove(Piece.IndexOf(Oper[j]));
 
-            }
-            return false;
+                    Pieces.Add((Piece, Parser.Parsing(Piece).Replace('-', '—')));
+                    Expression = Expression.Replace(Piece, Pieces[Pieces.Count - 1].Res);
+                }
         }
 
         private void ChangeExpression(ref string Expression)
         {
-            foreach (var item in Pieces)
-                if (!Expression.Contains(item.Exp)) Pieces.Remove(item);
-                else Expression = Expression.Replace(item.Exp, item.Res);
+
+            for (ushort i = 0; i < Pieces.Count; i++)
+            {
+                if (!Expression.Contains(Pieces[i].Exp)) Pieces.Remove(Pieces[i]);
+                else Expression = Expression.Replace(Pieces[i].Exp, Pieces[i].Res); 
+            }
         }
     }
 }
