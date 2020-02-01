@@ -14,7 +14,7 @@ namespace Parser
         const string Digits = "1234567890";
         const string Operations = "+-*/^";
         const string Functions = "SinCosTanLnExp√—";
-        const string Separators = "().";
+        const string Separators = "(),";
 
         public string Expression { get; private set; }
         public char Deep { get; private set;   } = 'D';
@@ -132,7 +132,7 @@ namespace Parser
         public void AddPoint()
         {
             if (Digits.Contains(Expression[Expression.Length - 1]))
-                Expression += (!SecondPoint()) ? "." : "";
+                Expression += (!SecondPoint()) ? "," : "";
         }
 
 
@@ -141,7 +141,7 @@ namespace Parser
         {
             for(int i = Expression.Length - 1; i >= 0; i--)
             {
-                if (Expression[i] == '.') return true;
+                if (Expression[i] == ',') return true;
                 if (!Digits.Contains(Expression[i])) break;
             }
             return false;
