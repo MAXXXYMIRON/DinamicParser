@@ -10,19 +10,87 @@ namespace Parser
 {
     static class Parser
     {
+        //Внутренний класс 
+        //который минимизирует вводимое выражение
+        //находит результат в скобках и от функций при первом их вводе
+        //в последствии сравнивает уже посчитанные скобки и функции, с теми 
+        //которые есть в выражении и заменяет их на результат
+        private class Minimize
+        {
+            //Скобки и функции с их результатами
+            List<(string Exp, string Res)> Pieces;
+            const string Func = "SCTLE√";
+            const string Oper = "+-*/^";
+
+            public Minimize() { Pieces = new List<(string Exp, string Res)>(); }
+
+            public string Minimized(string Expression)
+            {
+                ChangeExpression(ref Expression);
+
+                while (SearchPiecesInBoreder(ref Expression)) { }
+                SearchPiecesInUnaryFunction(ref Expression);
+
+                return Expression;
+            }
+
+            private bool SearchPiecesInBoreder(ref string Expression)
+            {
+                string Piece = "";
+                for (ushort i = 0; i < Expression.Length; i++)
+                {
+                    Piece += Expression[i];
+                    if (Expression[i] == '(') Piece = Expression[i].ToString();
+
+                    if (Expression[i] == ')')
+                    {
+                        Pieces.Add((Piece, Parsing(Piece).Replace('-', '—')));
+                        Expression = Expression.Replace(Piece, Pieces[Pieces.Count - 1].Res);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            private void SearchPiecesInUnaryFunction(ref string Expression)
+            {
+                string Piece = "";
+                for (ushort i = 0; i < Expression.Length; i++)
+                    if (Func.Contains(Expression[i]))
+                    {
+                        Piece = Expression.Substring(i);
+                        for (int j = 0; j < Oper.Length; j++)
+                            Piece = (Piece.IndexOf(Oper[j]) < 0) ? Piece : Piece.Remove(Piece.IndexOf(Oper[j]));
+
+                        Pieces.Add((Piece, Parsing(Piece).Replace('-', '—')));
+                        Expression = Expression.Replace(Piece, Pieces[Pieces.Count - 1].Res);
+                    }
+            }
+
+            private void ChangeExpression(ref string Expression)
+            {
+                for (ushort i = 0; i < Pieces.Count; i++)
+                    if (!Expression.Contains(Pieces[i].Exp)) Pieces.Remove(Pieces[i]);
+                    else Expression = Expression.Replace(Pieces[i].Exp, Pieces[i].Res);
+            }
+        }
+
+
+
         static string[] Operations = new string[12] 
         {"+", "-", "*", "/", "^", "√", "Sin", "Cos", "Tan", "Ln", "Exp", "—"};
-
         static string EarlyResult;
         static Minimize Min;
         public static CorectorExpression Correct { get; set; }
-
         static Parser()
         {
             EarlyResult = "0";
             Min = new Minimize();
             Correct = new CorectorExpression();
         }
+
+
+
 
         //Парсинг с простой проверкой выражения
         public static string ParsingExpression(string Expression)
@@ -32,12 +100,9 @@ namespace Parser
 
             return EarlyResult;
         }
-
         //Парсинг со сложной проверкой выражения
-        public static string ParsingExpression(string Expression, char D)
+        public static string ParsingExpressionDeep(string Expression)
         {
-            if (D != Correct.Deep) return EarlyResult;
-
             if (Correct.RightExpressionDeep())
                 EarlyResult = Parsing(Expression);
 
@@ -45,7 +110,7 @@ namespace Parser
         }
 
         //Парсинг выражения(вернет результат)
-        internal static string Parsing(string Expression)
+        static string Parsing(string Expression)
         {
             DelBorder(ref Expression);
 
@@ -62,6 +127,7 @@ namespace Parser
 
 
 
+
         //Проверить если в выражении лишь одно число
         static bool Digit(ref string Expression)
         {
@@ -71,9 +137,6 @@ namespace Parser
 
             return true;
         }
-
-
-
 
         //Удаление лишних скобок в выражении
         static void DelBorder(ref string mainExp)
@@ -153,8 +216,6 @@ namespace Parser
             return ref Operations[0];
         }
             
-
-
         //Проверка правильности выбора точки перегиба для бинарной операции
         static bool RightInflectionPoint(ushort indOper, ref string mainExp)
         {
@@ -168,6 +229,7 @@ namespace Parser
 
             return (OpenBord == CloseBord) ? true : false;
         }
+
 
 
         //Выполнение опрации в зависимости от точки перегиба

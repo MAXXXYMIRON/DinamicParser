@@ -17,12 +17,14 @@ namespace Parser
         const string Separators = "(),";
 
         public string Expression { get; private set; }
-        public char Deep { get; private set;   } = 'D';
 
         public CorectorExpression()
         {
             Expression = "0";
         }
+
+
+
 
         //Добавить цифру в выражение
         public void AddDigit(char digit)
@@ -37,6 +39,8 @@ namespace Parser
                 Expression += digit;
             }
         }
+
+
 
         //Добавить в выражение операцию, типа Sin, Cos, √ и т.д.
         public void AddOperations(string operation)
@@ -53,6 +57,8 @@ namespace Parser
                 Expression += operation;
             }
         }
+
+
 
         //Добавить в выражение операцию, типа +, -, *, ^
         public void AddOperations(char operation)
@@ -85,6 +91,8 @@ namespace Parser
             }
         }
 
+
+
         //Дабавть скобку
         public void AddBracket(char bracket)
         {
@@ -113,7 +121,6 @@ namespace Parser
                 }
             }
         }
-
         //Проверка возможности поставить закрываюшую скобку
         //Проверка на совпадение кол-ва открывающих и закрывающих скобок
         bool CheckCloseBracket()
@@ -128,14 +135,13 @@ namespace Parser
         }
 
 
+
         //Добавить точку
         public void AddPoint()
         {
             if (Digits.Contains(Expression[Expression.Length - 1]))
                 Expression += (!SecondPoint()) ? "," : "";
         }
-
-
         //Проверка чтобы не поставить вторую точку в числе
         bool SecondPoint()
         {
@@ -146,6 +152,7 @@ namespace Parser
             }
             return false;
         }
+
 
 
         //Стереть последнюю цифру, операцию, функцию или разделитель
@@ -167,6 +174,8 @@ namespace Parser
 
              if(Expression == "") Expression = "0";
          }
+
+
 
         //Проверить провильно ли введено выражение для поиска результата
         public bool RightExpressionDeep()
@@ -202,7 +211,8 @@ namespace Parser
              ?  true
              :  false;
          }
-
+        //Проверить провильно ли введено выражение для поиска результата
+        //(С учетом, что ввод осуществлялся с помощью этого класса)
         public bool RightExpression()
         {
             if (CheckCloseBracket()) return false;
